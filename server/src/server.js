@@ -36,7 +36,7 @@ setInterval(() => {
             now - room.lastActivity;
 
         const fiveMinutes =
-            30 * 1000;
+            5 * 60 * 1000;
 
         if (
             inactiveFor >
