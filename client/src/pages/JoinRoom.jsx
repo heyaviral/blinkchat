@@ -1,10 +1,19 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {
+    useState,
+    useEffect,
+} from "react";
+
+import {
+    useNavigate,
+    useSearchParams,
+} from "react-router-dom";
 
 import socket from "../services/socket";
 
 export default function JoinRoom() {
     const navigate = useNavigate();
+    const [searchParams] =
+        useSearchParams();
 
     const [roomId, setRoomId] =
         useState("");
@@ -17,6 +26,27 @@ export default function JoinRoom() {
 
     const [error, setError] =
         useState("");
+    useEffect(() => {
+
+        const room =
+            searchParams.get(
+                "room"
+            );
+
+        const pass =
+            searchParams.get(
+                "pass"
+            );
+
+        if (room) {
+            setRoomId(room);
+        }
+
+        if (pass) {
+            setPassword(pass);
+        }
+
+    }, [searchParams]);
 
     function handleJoinRoom() {
         setError("");

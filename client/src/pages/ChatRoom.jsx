@@ -304,15 +304,15 @@ export default function ChatRoom() {
 
     function copyInvite() {
 
-        navigator.clipboard.writeText(
-            `BlinkChat Invite
+        const inviteLink =
+            `https://blinkchatroom.netlify.app/join?room=${roomData.roomId}&pass=${roomData.password}`;
 
-Room ID: ${roomData.roomId}
-Password: ${roomData.password}`
+        navigator.clipboard.writeText(
+            inviteLink
         );
 
         showToast(
-            "Invite copied"
+            "Invite link copied"
         );
     }
     function leaveRoom() {
