@@ -169,6 +169,29 @@ function registerSocketHandlers(io) {
             }
         );
 
+        socket.on(
+            "typing-start",
+            ({ roomId, name }) => {
+
+                socket.to(roomId).emit(
+                    "user-typing",
+                    name
+                );
+
+            }
+        );
+
+        socket.on(
+            "typing-stop",
+            ({ roomId }) => {
+
+                socket.to(roomId).emit(
+                    "user-stopped-typing"
+                );
+
+            }
+        );
+
         // END ROOM
         socket.on(
             "end-room",
