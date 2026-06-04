@@ -45,37 +45,49 @@ export default function CreateRoom() {
         );
     }
 
-    return (
-        <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-6">
-            <div className="w-full max-w-md">
-                <h1 className="text-4xl font-bold mb-2">
-                    Create Room
+   return (
+    <div className="min-h-screen bg-[#070707] flex items-center justify-center px-6">
+        <div className="w-full max-w-xl">
+
+            <div className="text-center mb-12">
+                <h1 className="text-6xl font-black tracking-tight">
+                    BlinkChat
                 </h1>
 
-                <p className="text-zinc-400 mb-8">
-                    Start a temporary chat room.
+                <p className="mt-6 text-zinc-500 text-lg">
+                    Create a temporary room.
                 </p>
+
+                <div className="w-20 h-px bg-zinc-800 mx-auto mt-8"></div>
+            </div>
+
+            <div className="mb-6">
+                <label className="block text-sm text-zinc-500 uppercase mb-3">
+                    Your Name
+                </label>
 
                 <input
                     type="text"
-                    placeholder="Your name"
+                    placeholder="Enter your name"
                     value={name}
                     onChange={(e) =>
                         setName(e.target.value)
                     }
-                    className="w-full p-4 rounded-xl bg-zinc-900 border border-zinc-800 mb-4 outline-none"
+                    className="w-full px-5 py-4 bg-[#111111] border border-zinc-800 rounded-md outline-none text-white placeholder:text-zinc-600 focus:border-zinc-600"
                 />
-
-                <button
-                    onClick={handleCreateRoom}
-                    disabled={loading}
-                    className="w-full bg-white text-black py-4 rounded-xl font-semibold"
-                >
-                    {loading
-                        ? "Creating..."
-                        : "Create Room"}
-                </button>
             </div>
+
+            <button
+                onClick={handleCreateRoom}
+                disabled={loading}
+                className="w-full bg-white text-black py-4 rounded-md font-semibold transition-all duration-200 hover:scale-[1.02] disabled:opacity-50"
+            >
+                {loading
+                    ? "Creating..."
+                    : "Create Room"}
+            </button>
+
         </div>
-    );
+    </div>
+);
 }

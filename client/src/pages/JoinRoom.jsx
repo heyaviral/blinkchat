@@ -98,16 +98,24 @@ export default function JoinRoom() {
         );
     }
 
-    return (
-        <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-6">
-            <div className="w-full max-w-md">
-                <h1 className="text-4xl font-bold mb-2">
-                    Join Room
+return (
+    <div className="h-screen bg-[#070707] flex items-center justify-center px-6 overflow-hidden">
+
+        <div className="w-full max-w-md">
+
+            <div className="mb-10">
+
+                <h1 className="text-5xl font-black tracking-tight">
+                    BlinkChat
                 </h1>
 
-                <p className="text-zinc-400 mb-8">
-                    Enter room details.
+                <p className="mt-3 text-zinc-500">
+                    Join a temporary room.
                 </p>
+
+            </div>
+
+            <div className="space-y-4">
 
                 <input
                     placeholder="Room ID"
@@ -117,7 +125,7 @@ export default function JoinRoom() {
                             e.target.value
                         )
                     }
-                    className="w-full p-4 rounded-xl bg-zinc-900 border border-zinc-800 mb-4"
+                    className="w-full bg-[#111111] border border-zinc-800 px-5 py-4 rounded-md outline-none focus:border-zinc-600 placeholder:text-zinc-600"
                 />
 
                 <input
@@ -128,7 +136,7 @@ export default function JoinRoom() {
                             e.target.value
                         )
                     }
-                    className="w-full p-4 rounded-xl bg-zinc-900 border border-zinc-800 mb-4"
+                    className="w-full bg-[#111111] border border-zinc-800 px-5 py-4 rounded-md outline-none focus:border-zinc-600 placeholder:text-zinc-600"
                 />
 
                 <input
@@ -139,24 +147,32 @@ export default function JoinRoom() {
                             e.target.value
                         )
                     }
-                    className="w-full p-4 rounded-xl bg-zinc-900 border border-zinc-800 mb-4"
+                    className="w-full bg-[#111111] border border-zinc-800 px-5 py-4 rounded-md outline-none focus:border-zinc-600 placeholder:text-zinc-600"
                 />
 
-                {error && (
-                    <div className="text-red-400 mb-4">
-                        {error}
-                    </div>
-                )}
-
-                <button
-                    onClick={
-                        handleJoinRoom
-                    }
-                    className="w-full bg-white text-black py-4 rounded-xl font-semibold"
-                >
-                    Join Room
-                </button>
             </div>
+
+            {error && (
+                <div className="mt-4 text-red-400 text-sm">
+                    {error}
+                </div>
+            )}
+
+            <button
+                onClick={
+                    handleJoinRoom
+                }
+                className="w-full mt-6 bg-white text-black py-4 rounded-md font-semibold transition-all duration-200 hover:scale-[1.02]"
+            >
+                Join Room
+            </button>
+
+            <p className="mt-8 text-xs text-zinc-600">
+                No accounts. No history. No setup.
+            </p>
+
         </div>
-    );
+
+    </div>
+);
 }
