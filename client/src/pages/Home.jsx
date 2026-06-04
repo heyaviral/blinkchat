@@ -67,11 +67,12 @@ export default function Home() {
           >
             Built by Aviral • Read the story
           </Link>
+          <br /><br />
           <a
-    href="https://github.com/heyaviral/blinkchat/releases/latest"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="
+            href="https://github.com/heyaviral/blinkchat/releases/latest"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="
         md:hidden
         inline-block
         mt-4
@@ -80,9 +81,9 @@ export default function Home() {
         transition-colors
         text-sm
     "
->
-    Android App
-</a>
+          >
+            Android App
+          </a>
           <div className="mt-8 text-xs text-zinc-600">v1.2</div>
         </div>
       </div>
