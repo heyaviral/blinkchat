@@ -114,7 +114,7 @@ export default function About() {
         <div className="space-y-2">
           <div className="font-semibold">Built by Aviral</div>
 
-          <div className="text-zinc-500">Version 1.2</div>
+          <div className="text-zinc-500">Version 1.4</div>
 
           <div className="text-zinc-500">Last updated June 2026</div>
         </div>
