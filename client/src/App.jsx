@@ -12,7 +12,7 @@ import { Capacitor } from "@capacitor/core";
 import useAndroidBackButton from "./hooks/useAndroidBackButton";
 
 import { trackPageView } from "./services/analytics";
-import { checkForUpdates } from "./services/updateChecker";
+import { checkForUpdates } from "./services/updatechecker";
 
 function AnalyticsTracker() {
   const location = useLocation();
