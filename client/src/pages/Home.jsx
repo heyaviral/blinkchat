@@ -67,7 +67,8 @@ export default function Home() {
           >
             Built by Aviral • Read the story
           </Link>
-          <br /><br />
+          <br />
+          <br />
           <a
             href="https://github.com/heyaviral/blinkchat/releases/latest"
             target="_blank"
@@ -84,7 +85,7 @@ export default function Home() {
           >
             Android App
           </a>
-          <div className="mt-8 text-xs text-zinc-600">v1.2</div>
+          <div className="mt-8 text-xs text-zinc-600">v1.4</div>
         </div>
       </div>
     </div>

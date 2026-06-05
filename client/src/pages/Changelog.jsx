@@ -9,6 +9,26 @@ export default function Changelog() {
         <div className="space-y-10">
           <div>
             ```
+            <div>
+              <h2 className="text-2xl font-bold">Version 1.4</h2>
+
+              <p className="text-zinc-500 mt-1">June 2026</p>
+
+              <ul className="mt-4 space-y-2 text-zinc-300">
+                <li>• Invite links now use blinkchatroom.in</li>
+                <li>• Added one-click message copying</li>
+                <li>• Hover-to-copy support on desktop</li>
+                <li>• Tap-to-copy support on mobile</li>
+                <li>• Added in-app update checker</li>
+                <li>
+                  • Update notifications now appear automatically for new
+                  releases
+                </li>
+                <li>• Update reminders reappear after dismissal</li>
+                <li>• Update prompts are shown only inside the Android app</li>
+                <li>• Various UI improvements and bug fixes</li>
+              </ul>
+            </div>
             <h2 className="text-2xl font-bold">Version 1.3</h2>
             <p className="text-zinc-500 mt-1">June 2026</p>
             <ul className="mt-4 space-y-2 text-zinc-300">

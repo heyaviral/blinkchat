@@ -4,6 +4,8 @@ import { Navigate, useNavigate } from "react-router-dom";
 
 import socket from "../services/socket";
 
+import { FiCopy } from "react-icons/fi";
+
 export default function ChatRoom() {
   const navigate = useNavigate();
 
@@ -32,6 +34,9 @@ export default function ChatRoom() {
   const previousMessageCount = useRef(0);
 
   const messagesEndRef = useRef(null);
+
+  const [selectedMessage, setSelectedMessage] = useState(null);
+  const [hoveredMessage, setHoveredMessage] = useState(null);
 
   const typingTimeoutRef = useRef(null);
 
@@ -167,6 +172,12 @@ export default function ChatRoom() {
     });
   }, [messages]);
 
+  function copyMessage(text) {
+    navigator.clipboard.writeText(text);
+
+    showToast("Copied!");
+  }
+
   function sendMessage() {
     if (!message.trim()) return;
 
@@ -189,7 +200,7 @@ export default function ChatRoom() {
   }
 
   function copyInvite() {
-    const inviteLink = `https://blinkchatroom.netlify.app/join?room=${roomData.roomId}&pass=${roomData.password}`;
+    const inviteLink = `https://blinkchatroom.in/join?room=${roomData.roomId}&pass=${roomData.password}`;
 
     navigator.clipboard.writeText(inviteLink);
 
@@ -439,27 +450,56 @@ export default function ChatRoom() {
                 className={`flex message-appear ${
                   isMe ? "justify-end" : "justify-start"
                 }`}
+                onClick={() =>
+                  setSelectedMessage(selectedMessage === index ? null : index)
+                }
+                onMouseEnter={() => setHoveredMessage(index)}
+                onMouseLeave={() => setHoveredMessage(null)}
               >
-                <div
-                  className={`max-w-[80%] px-4 py-3 rounded-lg ${
-                    isMe ? "bg-white text-black" : "bg-[#151515] text-white"
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-semibold text-sm">
-                      {isMe ? "You" : msg.sender}
-                    </span>
+                <div className="relative">
+                  <div
+                    className={`max-w-[80%] px-4 py-3 rounded-lg ${
+                      isMe ? "bg-white text-black" : "bg-[#151515] text-white"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-semibold text-sm">
+                        {isMe ? "You" : msg.sender}
+                      </span>
 
-                    <span
-                      className={`text-xs ${
-                        isMe ? "text-zinc-700" : "text-zinc-500"
-                      }`}
-                    >
-                      {formatTime(msg.timestamp)}
-                    </span>
+                      <span
+                        className={`text-xs ${
+                          isMe ? "text-zinc-700" : "text-zinc-500"
+                        }`}
+                      >
+                        {formatTime(msg.timestamp)}
+                      </span>
+                    </div>
+
+                    <div className="break-words">{msg.text}</div>
                   </div>
 
-                  <div className="break-words">{msg.text}</div>
+                  {(selectedMessage === index || hoveredMessage === index) && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        copyMessage(msg.text);
+                      }}
+                      className={`
+  absolute
+  top-1/2
+  -translate-y-1/2
+  ${isMe ? "-left-10" : "-right-10"}
+  bg-zinc-800
+  hover:bg-zinc-700
+  rounded-md
+  p-2
+  transition
+`}
+                    >
+                      <FiCopy size={14} />
+                    </button>
+                  )}
                 </div>
               </div>
             );
