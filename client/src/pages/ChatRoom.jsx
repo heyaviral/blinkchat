@@ -27,6 +27,7 @@ export default function ChatRoom() {
   const [showLeaveModal, setShowLeaveModal] = useState(false);
 
   const [showEndModal, setShowEndModal] = useState(false);
+  const [roomEndedInfo, setRoomEndedInfo] = useState(null);
 
   const previousMessageCount = useRef(0);
 
@@ -84,13 +85,25 @@ export default function ChatRoom() {
 
       setMessages(msgs);
     };
+    const handleRoomEnded = (data) => {
+      let title = "Room Ended";
 
-    const handleRoomEnded = () => {
-      showToast("Room ended");
+      let message = "This room is no longer available.";
 
-      sessionStorage.removeItem("blinkchat-session");
+      if (data?.reason === "owner") {
+        title = "Room Closed";
 
-      navigate("/");
+        message = "The room owner ended the room.";
+      } else if (data?.reason === "inactivity") {
+        title = "Room Expired";
+
+        message = "This room was automatically deleted due to inactivity.";
+      }
+
+      setRoomEndedInfo({
+        title,
+        message,
+      });
     };
 
     const handleUserTyping = (name) => {
@@ -130,6 +143,21 @@ export default function ChatRoom() {
       socket.off("user-stopped-typing", handleUserStoppedTyping);
 
       window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+  useEffect(() => {
+    const handleAndroidBack = () => {
+      if (roomData.isOwner) {
+        setShowEndModal(true);
+      } else {
+        setShowLeaveModal(true);
+      }
+    };
+
+    window.addEventListener("blinkchat-back-button", handleAndroidBack);
+
+    return () => {
+      window.removeEventListener("blinkchat-back-button", handleAndroidBack);
     };
   }, []);
 
@@ -189,7 +217,7 @@ export default function ChatRoom() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       {showLeaveModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-6">
           <div className="w-full max-w-sm bg-[#111111] border border-zinc-800 rounded-md p-6">
             <h2 className="text-xl font-bold mb-3">Leave Room</h2>
 
@@ -217,7 +245,7 @@ export default function ChatRoom() {
       )}
 
       {showEndModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-6">
           <div className="w-full max-w-sm bg-[#111111] border border-zinc-800 rounded-md p-6">
             <h2 className="text-xl font-bold mb-3">End Room</h2>
 
@@ -243,27 +271,44 @@ export default function ChatRoom() {
           </div>
         </div>
       )}
+      {roomEndedInfo && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6">
+          <div className="w-full max-w-sm bg-[#111111] border border-zinc-800 rounded-md p-6">
+            <h2 className="text-xl font-bold mb-3">{roomEndedInfo.title}</h2>
+
+            <p className="text-zinc-400 mb-6">{roomEndedInfo.message}</p>
+
+            <button
+              onClick={() => {
+                sessionStorage.removeItem("blinkchat-session");
+
+                navigate("/");
+              }}
+              className="w-full bg-white text-black py-3 rounded-md font-semibold"
+            >
+              Return Home
+            </button>
+          </div>
+        </div>
+      )}
       <div
-    className={`
+        className={`
         fixed inset-0 z-50
         transition-opacity duration-300
         ${
-            showMembers
-                ? "opacity-100 pointer-events-auto"
-                : "opacity-0 pointer-events-none"
+          showMembers
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
         }
     `}
->
+      >
+        <div
+          className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+          onClick={() => setShowMembers(false)}
+        />
 
-    <div
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-        onClick={() =>
-            setShowMembers(false)
-        }
-    />
-
-    <div
-        className={`
+        <div
+          className={`
             absolute
             right-0
             top-0
@@ -279,54 +324,34 @@ export default function ChatRoom() {
             transition-transform
             duration-300
             ease-out
-            ${
-                showMembers
-                    ? "translate-x-0"
-                    : "translate-x-full"
-            }
+            ${showMembers ? "translate-x-0" : "translate-x-full"}
         `}
-    >
-
-        <div className="flex justify-between items-center mb-4">
-
-            <h2 className="font-bold">
-                Members ({users.length})
-            </h2>
+        >
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="font-bold">Members ({users.length})</h2>
 
             <button
-                onClick={() =>
-                    setShowMembers(false)
-                }
-                className="text-zinc-400"
+              onClick={() => setShowMembers(false)}
+              className="text-zinc-400"
             >
-                ✕
+              ✕
             </button>
+          </div>
 
-        </div>
-
-        <div className="space-y-2">
-
+          <div className="space-y-2">
             {users.map((user) => (
+              <div
+                key={user.socketId}
+                className="bg-[#151515] border border-zinc-800 rounded-md p-3"
+              >
+                {user.name}
 
-                <div
-                    key={user.socketId}
-                    className="bg-[#151515] border border-zinc-800 rounded-md p-3"
-                >
-
-                    {user.name}
-
-                    {user.name === roomData.ownerName &&
-                        " 👑"}
-
-                </div>
-
+                {user.name === roomData.ownerName && " 👑"}
+              </div>
             ))}
-
+          </div>
         </div>
-
-    </div>
-
-</div>
+      </div>
       {toast && (
         <div className="fixed top-5 right-5 z-50 bg-zinc-800 border border-zinc-700 px-4 py-3 rounded-xl shadow-lg">
           {toast}
@@ -411,7 +436,9 @@ export default function ChatRoom() {
             return (
               <div
                 key={index}
-                className={`flex ${isMe ? "justify-end" : "justify-start"}`}
+                className={`flex message-appear ${
+                  isMe ? "justify-end" : "justify-start"
+                }`}
               >
                 <div
                   className={`max-w-[80%] px-4 py-3 rounded-lg ${

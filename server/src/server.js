@@ -44,8 +44,12 @@ setInterval(() => {
         ) {
 
             io.to(roomId).emit(
-                "room-ended"
-            );
+    "room-ended",
+    {
+        reason:
+            "inactivity",
+    }
+);
 
             delete rooms[roomId];
 

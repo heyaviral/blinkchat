@@ -7,9 +7,30 @@ import ChatRoom from "./pages/ChatRoom";
 import About from "./pages/About";
 import Changelog from "./pages/Changelog";
 
-export default function App() {
+import useAndroidBackButton from "./hooks/useAndroidBackButton";
+
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+
+import { trackPageView } from "./services/analytics";
+
+function AnalyticsTracker() {
+  const location = useLocation();
+
+  useEffect(() => {
+    trackPageView(location.pathname);
+  }, [location]);
+
+  return null;
+}
+
+function AppContent() {
+  useAndroidBackButton();
+
   return (
-    <BrowserRouter>
+    <>
+      <AnalyticsTracker />
+
       <Routes>
         <Route path="/" element={<Home />} />
 
@@ -18,10 +39,19 @@ export default function App() {
         <Route path="/join" element={<JoinRoom />} />
 
         <Route path="/room/:roomId" element={<ChatRoom />} />
+
         <Route path="/about" element={<About />} />
 
         <Route path="/changelog" element={<Changelog />} />
       </Routes>
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
     </BrowserRouter>
   );
 }

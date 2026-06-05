@@ -1,256 +1,125 @@
 const {
-    createRoom,
-    joinRoom,
-    removeUser,
-    getRoom,
-    addMessage,
-    deleteRoom,
+  createRoom,
+  joinRoom,
+  removeUser,
+  getRoom,
+  addMessage,
+  deleteRoom,
 } = require("./roomManager");
 
 function registerSocketHandlers(io) {
+  io.on(
+    "connection",
+    (socket) => {
+      console.log(`Connected: ${socket.id}`);
 
-    io.on("connection", (socket) => {
+      // CREATE ROOM
+      socket.on("create-room", ({ name }, callback) => {
+        const trimmedName = name?.trim();
 
-        console.log(
-            `Connected: ${socket.id}`
-        );
+        if (!trimmedName || trimmedName.length < 2 || trimmedName.length > 25) {
+          callback({
+            success: false,
+            message: "Name must be between 2 and 25 characters.",
+          });
 
-        // CREATE ROOM
-        socket.on(
-            "create-room",
-            ({ name }, callback) => {
+          return;
+        }
 
-                const room =
-                    createRoom(
-                        socket.id,
-                        name
-                    );
+        const room = createRoom(socket.id, trimmedName);
 
-                socket.join(
-                    room.roomId
-                );
+        socket.join(room.roomId);
 
-                callback({
-                    success: true,
-                    roomId:
-                        room.roomId,
-                    password:
-                        room.password,
-                    ownerName:
-                        room.ownerName,
-                });
-            }
-        );
+        callback({
+          success: true,
+          roomId: room.roomId,
+          password: room.password,
+          ownerName: room.ownerName,
+        });
+      });
 
-        // JOIN ROOM
-        socket.on(
-            "join-room",
-            (
-                {
-                    roomId,
-                    password,
-                    name,
-                },
-                callback
-            ) => {
+      // JOIN ROOM
+      socket.on("join-room", ({ roomId, password, name }, callback) => {
+        const trimmedName = name?.trim();
 
-                const result =
-                    joinRoom(
-                        roomId,
-                        password,
-                        socket.id,
-                        name
-                    );
+        if (!trimmedName || trimmedName.length < 2 || trimmedName.length > 25) {
+          callback({
+            success: false,
+            message: "Name must be between 2 and 25 characters.",
+          });
 
-                if (
-                    !result.success
-                ) {
+          return;
+        }
 
-                    callback(
-                        result
-                    );
-
-                    return;
-                }
-
-                socket.join(
-                    roomId
-                );
-
-                io.to(
-                    roomId
-                ).emit(
-                    "members-updated",
-                    result.room.users
-                );
-
-                io.to(
-                    roomId
-                ).emit(
-                    "messages-updated",
-                    result.room.messages
-                );
-
-                callback({
-                    success: true,
-                    room:
-                        result.room,
-                });
-            }
-        );
+        const result = joinRoom(roomId, password, socket.id, trimmedName);
 
         // GET ROOM DATA
-        socket.on(
-            "get-room-data",
-            (
-                { roomId },
-                callback
-            ) => {
+        socket.on("get-room-data", ({ roomId }, callback) => {
+          const room = getRoom(roomId);
 
-                const room =
-                    getRoom(
-                        roomId
-                    );
+          if (!room) {
+            callback({
+              success: false,
+            });
 
-                if (!room) {
+            return;
+          }
 
-                    callback({
-                        success: false,
-                    });
-
-                    return;
-                }
-
-                callback({
-                    success: true,
-                    users:
-                        room.users,
-                    messages:
-                        room.messages,
-                    ownerName:
-                        room.ownerName,
-                });
-            }
-        );
+          callback({
+            success: true,
+            users: room.users,
+            messages: room.messages,
+            ownerName: room.ownerName,
+          });
+        });
 
         // SEND MESSAGE
-        socket.on(
-            "send-message",
-            ({
-                roomId,
-                sender,
-                text,
-            }) => {
+        socket.on("send-message", ({ roomId, sender, text }) => {
+          const message = addMessage(roomId, sender, text);
 
-                const message =
-                    addMessage(
-                        roomId,
-                        sender,
-                        text
-                    );
+          if (!message) return;
 
-                if (!message)
-                    return;
+          const room = getRoom(roomId);
 
-                const room =
-                    getRoom(
-                        roomId
-                    );
+          if (!room) return;
 
-                if (!room)
-                    return;
+          io.to(roomId).emit("messages-updated", room.messages);
+        });
 
-                io.to(
-                    roomId
-                ).emit(
-                    "messages-updated",
-                    room.messages
-                );
-            }
-        );
+        socket.on("typing-start", ({ roomId, name }) => {
+          socket.to(roomId).emit("user-typing", name);
+        });
 
-        socket.on(
-            "typing-start",
-            ({ roomId, name }) => {
-
-                socket.to(roomId).emit(
-                    "user-typing",
-                    name
-                );
-
-            }
-        );
-
-        socket.on(
-            "typing-stop",
-            ({ roomId }) => {
-
-                socket.to(roomId).emit(
-                    "user-stopped-typing"
-                );
-
-            }
-        );
+        socket.on("typing-stop", ({ roomId }) => {
+          socket.to(roomId).emit("user-stopped-typing");
+        });
 
         // END ROOM
-        socket.on(
-            "end-room",
-            ({ roomId }) => {
+        socket.on("end-room", ({ roomId }) => {
+          io.to(roomId).emit("room-ended", {
+            reason: "owner",
+          });
 
-                io.to(
-                    roomId
-                ).emit(
-                    "room-ended"
-                );
-
-                deleteRoom(
-                    roomId
-                );
-            }
-        );
+          deleteRoom(roomId);
+        });
 
         // DISCONNECT
-        socket.on(
-            "disconnect",
-            () => {
+        socket.on("disconnect", () => {
+          removeUser(socket.id, (roomId) => {
+            const room = getRoom(roomId);
 
-                removeUser(
-                    socket.id,
-                    (roomId) => {
+            if (!room) return;
 
-                        const room =
-                            getRoom(
-                                roomId
-                            );
+            io.to(roomId).emit("members-updated", room.users);
 
-                        if (!room)
-                            return;
+            io.to(roomId).emit("messages-updated", room.messages);
+          });
 
-                        io.to(
-                            roomId
-                        ).emit(
-                            "members-updated",
-                            room.users
-                        );
+          console.log(`Disconnected: ${socket.id}`);
+        });
+      });
+    },
 
-                        io.to(
-                            roomId
-                        ).emit(
-                            "messages-updated",
-                            room.messages
-                        );
-                    }
-                );
-
-                console.log(
-                    `Disconnected: ${socket.id}`
-                );
-            }
-        );
-
-    });
-
+    (module.exports = registerSocketHandlers),
+  );
 }
-
-module.exports =
-    registerSocketHandlers;
