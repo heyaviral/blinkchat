@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-black text-white">
+    <div className="relative min-h-dvh overflow-hidden bg-black text-white">
       <div className="grid-bg" />
 
       <div className="absolute inset-0 pointer-events-none">
@@ -27,9 +27,9 @@ export default function Home() {
         </span>
       </div>
 
-      <main className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6">
+      <main className="relative z-10 flex min-h-dvh flex-col items-center justify-center px-6">
         <div className="text-center max-w-xl w-full">
-          <h1 className="text-7xl md:text-9xl font-bold tracking-tight">
+          <h1 className="text-5xl md:text-9xl font-bold tracking-tight">
             BlinkChat
           </h1>
 
@@ -41,15 +41,15 @@ export default function Home() {
             Create a room. Share a code. Talk. Forget.
           </p>
 
-          <div className="mt-12 flex flex-col gap-4">
+          <div className="mt-8 md:mt-12 flex flex-col gap-4">
             <Link
               to="/create"
               className="
-                h-16
+                h-14 md:h-16
                 flex
                 items-center
                 justify-center
-                rounded-2xl
+                rounded-lg
                 bg-white
                 text-black
                 font-semibold
@@ -65,11 +65,11 @@ export default function Home() {
             <Link
               to="/join"
               className="
-                h-16
+                h-14 md:h-16
                 flex
                 items-center
                 justify-center
-                rounded-2xl
+                rounded-lg
                 border
                 border-zinc-800
                 text-white
@@ -85,7 +85,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="absolute bottom-8 text-center">
+        <div className="absolute bottom-4 md:bottom-8 text-center">
           <Link
             to="/about"
             className="text-sm text-zinc-600 hover:text-zinc-400"

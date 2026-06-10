@@ -83,50 +83,121 @@ export default function JoinRoom() {
   }
 
   return (
-    <div className="h-screen bg-[#070707] flex items-center justify-center px-6 overflow-hidden">
-      <div className="w-full max-w-md">
-        <div className="mb-10">
-          <h1 className="text-5xl font-black tracking-tight">BlinkChat</h1>
+    <div className="relative min-h-dvh overflow-hidden bg-black text-white">
+      <div className="grid-bg" />
 
-          <p className="mt-3 text-zinc-500">Join a temporary room.</p>
+      <main className="relative z-10 flex min-h-dvh flex-col items-center justify-center px-6">
+        <div className="w-full max-w-md">
+          <div className="text-center">
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
+              BlinkChat
+            </h1>
+
+            <p className="mt-3 text-zinc-500">
+              Join a temporary private conversation.
+            </p>
+          </div>
+
+          <div className="flex justify-center mt-8 mb-8">
+            <div className="w-20 h-px bg-zinc-800"></div>
+          </div>
+
+          <div className="mt-12 space-y-4">
+            <input
+              placeholder="Room ID"
+              value={roomId}
+              onChange={(e) => setRoomId(e.target.value)}
+              className="
+              w-full
+              h-14
+              px-5
+              rounded-lg
+              bg-[#0d0d0d]
+              border
+              border-zinc-800
+              text-white
+              placeholder:text-zinc-600
+              outline-none
+              transition-colors
+              focus:border-zinc-700
+            "
+            />
+
+            <input
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="
+              w-full
+              h-14
+              px-5
+              rounded-lg
+              bg-[#0d0d0d]
+              border
+              border-zinc-800
+              text-white
+              placeholder:text-zinc-600
+              outline-none
+              transition-colors
+              focus:border-zinc-700
+            "
+            />
+
+            <input
+              placeholder="Your Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="
+              w-full
+              h-14
+              px-5
+              rounded-lg
+              bg-[#0d0d0d]
+              border
+              border-zinc-800
+              text-white
+              placeholder:text-zinc-600
+              outline-none
+              transition-colors
+              focus:border-zinc-700
+            "
+            />
+          </div>
+
+          {error && <div className="mt-4 text-sm text-red-400">{error}</div>}
+
+          <button
+            onClick={handleJoinRoom}
+            className="
+            mt-5
+            w-full
+            h-14
+            rounded-lg
+            bg-white
+            text-black
+            font-semibold
+            transition-all
+            duration-200
+            hover:-translate-y-1
+          "
+          >
+            Join Room
+          </button>
+
+          <button
+            onClick={() => navigate("/")}
+            className="
+            mt-5
+            w-full
+            text-zinc-500
+            hover:text-zinc-300
+            transition-colors
+          "
+          >
+            ← Back
+          </button>
         </div>
-
-        <div className="space-y-4">
-          <input
-            placeholder="Room ID"
-            value={roomId}
-            onChange={(e) => setRoomId(e.target.value)}
-            className="w-full bg-[#111111] border border-zinc-800 px-5 py-4 rounded-md outline-none focus:border-zinc-600 placeholder:text-zinc-600"
-          />
-
-          <input
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-[#111111] border border-zinc-800 px-5 py-4 rounded-md outline-none focus:border-zinc-600 placeholder:text-zinc-600"
-          />
-
-          <input
-            placeholder="Your Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full bg-[#111111] border border-zinc-800 px-5 py-4 rounded-md outline-none focus:border-zinc-600 placeholder:text-zinc-600"
-          />
-        </div>
-
-        {error && <div className="mt-4 text-red-400 text-sm">{error}</div>}
-
-        <button
-          onClick={handleJoinRoom}
-          className="w-full mt-6 bg-white text-black py-4 rounded-md font-semibold transition-all duration-200 hover:scale-[1.02]"
-        >
-          Join Room
-        </button>
-
-        <p className="mt-8 text-xs text-zinc-600">
-          No accounts. No history. No setup.
-        </p>
-      </div>
+      </main>
     </div>
   );
 }
