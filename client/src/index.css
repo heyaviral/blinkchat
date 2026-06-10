@@ -1,4 +1,50 @@
 @import "tailwindcss";
+.grid-bg {
+  position: absolute;
+  inset: 0;
+
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+
+  background-size: 40px 40px;
+}
+
+.floating-word {
+  position: absolute;
+
+  color: rgba(255, 255, 255, 0.09);
+
+  font-size: 1rem;
+
+  font-weight: 700;
+
+  letter-spacing: 0.4em;
+
+  animation: float 18s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translate(0px, 0px);
+  }
+
+  25% {
+    transform: translate(24px, -12px);
+  }
+
+  50% {
+    transform: translate(-18px, 18px);
+  }
+
+  75% {
+    transform: translate(15px, 9px);
+  }
+
+  100% {
+    transform: translate(0px, 0px);
+  }
+}
 
 html,
 body,
