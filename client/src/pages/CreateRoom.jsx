@@ -62,9 +62,11 @@ export default function CreateRoom() {
       <main className="relative z-10 flex min-h-dvh flex-col items-center justify-center px-6">
         <div className="w-full max-w-md">
           <div className="text-center">
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
-              BlinkChat
-            </h1>
+            <img
+              src="/icon.png"
+              alt="BlinkChat"
+              className="h-20 md:h-24 w-auto mx-auto"
+            />
 
             {/* <p className="mt-6 text-2xl font-semibold">Create a Room</p> */}
 

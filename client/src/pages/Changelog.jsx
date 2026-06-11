@@ -37,15 +37,18 @@ export default function Changelog() {
               <p className="mt-2 text-zinc-500">June 2026</p>
 
               <ul className="mt-6 space-y-3 text-zinc-400 leading-relaxed">
-                <li>• Complete homepage redesign</li>
+                <li>• Complete grid-based UI redesign</li>
                 <li>• Animated floating background elements</li>
-                <li>• New grid-based visual identity</li>
-                <li>• Redesigned Create Room page</li>
-                <li>• Redesigned Join Room page</li>
-                <li>• Redesigned Story page</li>
-                <li>• Redesigned Changelog page</li>
-                <li>• Improved mobile responsiveness</li>
+                <li>• UI overhaul for all pages</li>
+                <li>• Improved RoomInfo Panel</li>
+                <li>• Added members avatar</li>
+                <li>• Message layout overhaul</li>
+                <li>• Icon based room controls</li>
+                <li>• Improved mobile responsiveness and viewport handling</li>
                 <li>• General UI polish and consistency improvements</li>
+                <li>• Added navbar and brand logo</li>
+                <li>• Announced themes</li>
+                <li>• Changed RoomIDs to be numeric only</li>
               </ul>
             </section>
 

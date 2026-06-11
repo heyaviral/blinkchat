@@ -49,7 +49,7 @@ export default function JoinRoom() {
     socket.emit(
       "join-room",
       {
-        roomId: roomId.trim().toUpperCase(),
+        roomId: roomId.trim(),
 
         password: password.trim(),
 
@@ -89,9 +89,11 @@ export default function JoinRoom() {
       <main className="relative z-10 flex min-h-dvh flex-col items-center justify-center px-6">
         <div className="w-full max-w-md">
           <div className="text-center">
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
-              BlinkChat
-            </h1>
+            <img
+              src="/icon.png"
+              alt="BlinkChat"
+              className="h-20 md:h-24 w-auto mx-auto"
+            />
 
             <p className="mt-3 text-zinc-500">
               Join a temporary private conversation.
@@ -104,6 +106,9 @@ export default function JoinRoom() {
 
           <div className="mt-12 space-y-4">
             <input
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={6}
               placeholder="Room ID"
               value={roomId}
               onChange={(e) => setRoomId(e.target.value)}
@@ -125,6 +130,9 @@ export default function JoinRoom() {
 
             <input
               placeholder="Password"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={4}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="

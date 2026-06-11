@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 export default function Home() {
   return (
-    <div className="relative min-h-dvh overflow-hidden bg-black text-white">
+    <div className="relative min-h-dvh overflow-hidden bg-black text-white flex flex-col">
+      <Navbar />
       <div className="grid-bg" />
 
       <div className="absolute inset-0 pointer-events-none">
@@ -27,7 +29,7 @@ export default function Home() {
         </span>
       </div>
 
-      <main className="relative z-10 flex min-h-dvh flex-col items-center justify-center px-6">
+      <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-6">
         <div className="text-center max-w-xl w-full">
           <h1 className="text-5xl md:text-9xl font-bold tracking-tight">
             BlinkChat
