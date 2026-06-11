@@ -146,8 +146,7 @@ function registerSocketHandlers(io) {
           console.log(`Disconnected: ${socket.id}`);
         });
       });
-    },
-
-    (module.exports = registerSocketHandlers),
-  );
+    });
 }
+
+module.exports = registerSocketHandlers;
