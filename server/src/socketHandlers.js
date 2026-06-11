@@ -60,10 +60,20 @@ function registerSocketHandlers(io) {
 
         socket.join(roomId);
 
-        callback({
-          success: true,
-          room: result.room,
-        });
+callback({
+  success: true,
+  room: result.room,
+});
+
+io.to(roomId).emit(
+  "members-updated",
+  result.room.users
+);
+
+io.to(roomId).emit(
+  "messages-updated",
+  result.room.messages
+);
 
         // GET ROOM DATA
         socket.on("get-room-data", ({ roomId }, callback) => {
