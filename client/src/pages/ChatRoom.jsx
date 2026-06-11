@@ -2,6 +2,8 @@ import { useEffect, useState, useRef } from "react";
 
 import { Navigate, useNavigate } from "react-router-dom";
 
+import { Users, Link as LinkIcon, Send } from "lucide-react";
+
 import socket from "../services/socket";
 
 import { FiCopy } from "react-icons/fi";
@@ -427,32 +429,40 @@ export default function ChatRoom() {
               <button
                 onClick={copyInvite}
                 className="
-          bg-white
-          text-black
-          px-3
-          py-2
-          rounded-lg
-          text-sm
-          font-semibold
-        "
+    bg-[#0d0d0d]
+    border
+    border-zinc-800
+    p-2.5
+    rounded-lg
+    text-zinc-300
+    hover:text-white
+    hover:border-zinc-700
+    transition-all
+  "
               >
-                Invite
+                <LinkIcon size={18} strokeWidth={2} />
               </button>
 
               <button
                 onClick={() => setShowMembers(true)}
                 className="
-          bg-[#0d0d0d]
-          border
-          border-zinc-800
-          px-3
-          py-2
-          rounded-lg
-          text-sm
-          font-medium
-        "
+    flex
+    items-center
+    gap-2
+    bg-[#0d0d0d]
+    border
+    border-zinc-800
+    px-3
+    py-2
+    rounded-lg
+    text-zinc-300
+    hover:text-white
+    hover:border-zinc-700
+    transition-all
+  "
               >
-                {users.length}
+                <Users size={18} strokeWidth={2} />
+                <span className="text-sm">({users.length})</span>
               </button>
             </div>
           </div>
@@ -582,7 +592,7 @@ export default function ChatRoom() {
             onClick={sendMessage}
             className="bg-white text-black px-6 py-4 rounded-md font-semibold transition-all duration-200 hover:scale-[1.02]"
           >
-            Send
+            <Send size={18} strokeWidth={2} />
           </button>
         </div>
       </div>
