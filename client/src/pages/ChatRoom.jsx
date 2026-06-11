@@ -138,6 +138,10 @@ export default function ChatRoom() {
     socket.on("user-stopped-typing", handleUserStoppedTyping);
     window.addEventListener("beforeunload", handleBeforeUnload);
 
+    function getInitial(name) {
+      return name?.charAt(0).toUpperCase();
+    }
+
     return () => {
       socket.off("members-updated", handleMembersUpdated);
 
@@ -209,9 +213,14 @@ export default function ChatRoom() {
     showToast("Invite link copied");
   }
   function leaveRoom() {
-    sessionStorage.removeItem("blinkchat-session");
+    socket.emit("leave-room", {
+      roomId: roomData.roomId,
+    });
 
-    navigate("/");
+    setTimeout(() => {
+      sessionStorage.removeItem("blinkchat-session");
+      navigate("/");
+    }, 100);
   }
   function showToast(text) {
     setToast(text);
@@ -409,7 +418,7 @@ export default function ChatRoom() {
         )}
       </div>
 
-      <div className="h-[calc(100vh-73px)] flex flex-col">
+      <div className="flex-1 min-h-0 flex flex-col">
         <div className="border-b border-zinc-900 px-4 py-3">
           <div className="flex items-center justify-between gap-4">
             <div className="min-w-0">
@@ -468,7 +477,7 @@ export default function ChatRoom() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 min-h-0 overflow-y-auto">
           {messages.map((msg, index) => {
             if (msg.type === "system") {
               return (
@@ -489,6 +498,18 @@ export default function ChatRoom() {
             }
 
             const isMe = msg.sender === roomData.name;
+            const previousMessage = messages[index - 1];
+
+            const isGrouped =
+              previousMessage &&
+              previousMessage.type === "message" &&
+              previousMessage.sender === msg.sender;
+            const nextMessage = messages[index + 1];
+
+            const isLastInGroup =
+              !nextMessage ||
+              nextMessage.type !== "message" ||
+              nextMessage.sender !== msg.sender;
 
             return (
               <div
@@ -499,50 +520,80 @@ export default function ChatRoom() {
                 onMouseEnter={() => setHoveredMessage(index)}
                 onMouseLeave={() => setHoveredMessage(null)}
                 className={`
-        px-4
-        py-4
-        border-b
-        border-zinc-900
-        transition-colors
-        ${isMe ? "bg-[#111111]" : "bg-[#0b0b0b]"}
-      `}
+  px-4
+  ${isGrouped ? "pt-1 pb-2 pl-16" : "pt-4 pb-3"}
+  ${isLastInGroup ? "border-b border-zinc-900" : ""}
+  transition-colors
+  ${isMe ? "bg-[#111111]" : "bg-[#0b0b0b]"}
+`}
               >
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <span
-                      className={`
-              font-semibold
-              truncate
-              ${isMe ? "text-white" : "text-zinc-300"}
-            `}
-                    >
-                      {isMe ? "You" : msg.sender}
-                    </span>
+                {!isGrouped && (
+                  <div className="flex items-center justify-between gap-4 mb-2">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div
+                        className="
+          w-9
+          h-9
+          rounded-full
+          border
+          border-zinc-700
+          flex
+          items-center
+          justify-center
+          text-sm
+          font-semibold
+          text-zinc-300
+          shrink-0
+        "
+                      >
+                        {(isMe ? "You" : msg.sender).charAt(0).toUpperCase()}
+                      </div>
 
-                    <span className="text-xs text-zinc-500 shrink-0">
-                      {formatTime(msg.timestamp)}
-                    </span>
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`
+      font-semibold
+      ${isMe ? "text-white" : "text-zinc-300"}
+    `}
+                        >
+                          {isMe ? "You" : msg.sender}
+                        </div>
+
+                        <div className="text-xs text-zinc-500">
+                          {formatTime(msg.timestamp)}
+                        </div>
+                      </div>
+                    </div>
+
+                    {(selectedMessage === index ||
+                      hoveredMessage === index) && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          copyMessage(msg.text);
+                        }}
+                        className="
+          text-zinc-500
+          hover:text-white
+          transition-colors
+          shrink-0
+        "
+                      >
+                        <FiCopy size={14} />
+                      </button>
+                    )}
                   </div>
+                )}
 
-                  {(selectedMessage === index || hoveredMessage === index) && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        copyMessage(msg.text);
-                      }}
-                      className="
-              text-zinc-500
-              hover:text-white
-              transition-colors
-              shrink-0
-            "
-                    >
-                      <FiCopy size={14} />
-                    </button>
-                  )}
-                </div>
-
-                <div className="mt-2 whitespace-pre-wrap break-words text-zinc-200 leading-relaxed">
+                <div
+                  className={`
+    whitespace-pre-wrap
+    break-words
+    text-zinc-200
+    leading-relaxed
+    ${!isGrouped ? "mt-2 pl-12" : ""}
+  `}
+                >
                   {msg.text}
                 </div>
               </div>
@@ -553,12 +604,12 @@ export default function ChatRoom() {
         </div>
 
         {typingUser && (
-          <div className="px-4 py-2 text-sm text-zinc-500 italic border-t border-zinc-800">
+          <div className="shrink-0 px-4 py-2 text-sm text-zinc-500 italic border-t border-zinc-800">
             {typingUser} is typing...
           </div>
         )}
 
-        <div className="border-t border-zinc-800 p-4 flex gap-3">
+        <div className="shrink-0 border-t border-zinc-800 p-4 flex gap-3">
           <input
             value={message}
             onChange={(e) => {

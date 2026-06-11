@@ -2,6 +2,7 @@ const {
   createRoom,
   joinRoom,
   removeUser,
+  removeUserImmediately,
   getRoom,
   addMessage,
   deleteRoom,
@@ -17,10 +18,10 @@ function registerSocketHandlers(io) {
       socket.on("create-room", ({ name }, callback) => {
         const trimmedName = name?.trim();
 
-        if (!trimmedName || trimmedName.length < 2 || trimmedName.length > 25) {
+        if (!trimmedName || trimmedName.length < 3 || trimmedName.length > 25) {
           callback({
             success: false,
-            message: "Name must be between 2 and 25 characters.",
+            message: "Name must be between 3 and 25 characters.",
           });
 
           return;
@@ -42,16 +43,27 @@ function registerSocketHandlers(io) {
       socket.on("join-room", ({ roomId, password, name }, callback) => {
         const trimmedName = name?.trim();
 
-        if (!trimmedName || trimmedName.length < 2 || trimmedName.length > 25) {
+        if (!trimmedName || trimmedName.length < 3 || trimmedName.length > 25) {
           callback({
             success: false,
-            message: "Name must be between 2 and 25 characters.",
+            message: "Name must be between 3 and 25 characters.",
           });
 
           return;
         }
 
         const result = joinRoom(roomId, password, socket.id, trimmedName);
+        if (!result.success) {
+          callback(result);
+          return;
+        }
+
+        socket.join(roomId);
+
+        callback({
+          success: true,
+          room: result.room,
+        });
 
         // GET ROOM DATA
         socket.on("get-room-data", ({ roomId }, callback) => {
@@ -101,6 +113,22 @@ function registerSocketHandlers(io) {
           });
 
           deleteRoom(roomId);
+        });
+
+        //LEAVE ROOM
+        socket.on("leave-room", ({ roomId }) => {
+          console.log("LEAVE ROOM FIRED", socket.id, roomId);
+          removeUserImmediately(socket.id, (roomId) => {
+            const room = getRoom(roomId);
+
+            if (!room) return;
+
+            io.to(roomId).emit("members-updated", room.users);
+
+            io.to(roomId).emit("messages-updated", room.messages);
+          });
+
+          socket.leave(roomId);
         });
 
         // DISCONNECT
